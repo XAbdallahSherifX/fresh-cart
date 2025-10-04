@@ -25,7 +25,7 @@ export default function Wishlist() {
                 className="flex w-[90%] mx-auto
           flex-col justify-between gap-y-2 border-3 rounded-3xl hover:border-emerald-500 duration-300 p-3 relative"
               >
-                <Link href={`/product?s/${product?.id}`}>
+                <Link href={`/products/${product?.id}`}>
                   <div>
                     <Image
                       src={product?.imageCover}
