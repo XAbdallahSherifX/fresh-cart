@@ -3,39 +3,41 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
+  const { pathname } = request.nextUrl;
+
   if (token) {
-    if (
-      request.nextUrl.pathname === "/login" ||
-      request.nextUrl.pathname === "/register"
-    ) {
+    if (pathname === "/login" || pathname === "/register") {
       return NextResponse.redirect(new URL("/", request.url));
-    } else {
-      return NextResponse.next();
     }
-  } else {
-    if (
-      request.nextUrl.pathname === "/cart" ||
-      request.nextUrl.pathname === "/wishlist" ||
-      request.nextUrl.pathname === "/edit" ||
-      request.nextUrl.pathname === "/checkout" ||
-      request.nextUrl.pathname === "/changepass" ||
-      request.nextUrl.pathname === "/allorders"
-    ) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    } else {
-      return NextResponse.next();
-    }
+    return NextResponse.next();
   }
-}
-export const config = {
-  matcher: [
+  const protectedPaths = [
     "/cart",
     "/wishlist",
-    "/login",
-    "/register",
     "/edit",
     "/checkout",
     "/changepass",
     "/allorders",
+  ];
+
+  const isProtected = protectedPaths.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  if (isProtected) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [
+    "/cart/:path*",
+    "/wishlist/:path*",
+    "/edit/:path*",
+    "/checkout/:path*",
+    "/changepass/:path*",
+    "/allorders/:path*",
   ],
 };

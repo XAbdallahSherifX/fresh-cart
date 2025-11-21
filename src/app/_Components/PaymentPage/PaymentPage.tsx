@@ -157,7 +157,12 @@ export default function PaymentPage({
     }
     try {
       setIsCheckingOut(true);
-      await checkoutNow(id, fullAddress);
+      const url = await checkoutNow(id, fullAddress);
+      if (url) {
+        window.location.href = url;
+      } else {
+        toast.error("Checkout failed. Please try again.");
+      }
       setIsCheckingOut(false);
     } catch (error) {
       toast.error("Checkout failed. Please try again.", {
